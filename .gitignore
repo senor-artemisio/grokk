@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Xcode user-specific data
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+
+# Build artifacts
+build/
+DerivedData/
+*.moved-aside
+
+# SwiftPM
+.build/
+.swiftpm/
+
+# Local assistant/tooling folders
+.claude/
