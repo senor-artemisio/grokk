@@ -54,15 +54,33 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDele
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         if sender === mainWindow {
+            saveWindowFrame(sender)
             sender.orderOut(nil) // hide, don't close
             return false
         }
         return true
     }
 
+    private static let windowFrameKey = "app.mainWindowFrame"
+
+    private func saveWindowFrame(_ window: NSWindow) {
+        let frame = window.frame
+        let dict: [String: CGFloat] = ["x": frame.origin.x, "y": frame.origin.y, "w": frame.width, "h": frame.height]
+        UserDefaults.standard.set(dict, forKey: Self.windowFrameKey)
+    }
+
+    private func restoreWindowFrame(_ window: NSWindow) {
+        guard let dict = UserDefaults.standard.dictionary(forKey: Self.windowFrameKey),
+              let x = dict["x"] as? CGFloat, let y = dict["y"] as? CGFloat,
+              let w = dict["w"] as? CGFloat, let h = dict["h"] as? CGFloat else { return }
+        window.setFrame(NSRect(x: x, y: y, width: w, height: h), display: true)
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
-        // Restore window visibility so SwiftUI doesn't save "hidden" state
-        mainWindow?.makeKeyAndOrderFront(nil)
+        if let window = mainWindow {
+            saveWindowFrame(window)
+            window.makeKeyAndOrderFront(nil)
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -105,6 +123,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDele
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.center()
+        restoreWindowFrame(window)
 
         mainWindow = window
         window.makeKeyAndOrderFront(nil)
