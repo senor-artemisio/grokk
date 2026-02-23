@@ -9,12 +9,17 @@ import SwiftUI
 
 #if os(macOS)
 import AppKit
+import WebKit
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+@MainActor
+class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
+    private let statusItemMenu = NSMenu()
+    private var proxySettingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
+        setupStatusItemMenu()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -28,7 +33,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    @objc private func handleStatusItemLeftClick() {
+    @objc private func handleStatusItemClick() {
+        if NSApp.currentEvent?.type == .rightMouseUp {
+            statusItem?.menu = statusItemMenu
+            statusItem?.button?.performClick(nil)
+            return
+        }
+
         let app = NSApplication.shared
         app.unhide(nil)
         app.activate(ignoringOtherApps: true)
@@ -46,8 +57,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = item.button else { return }
 
         button.target = self
-        button.action = #selector(handleStatusItemLeftClick)
-        button.sendAction(on: [.leftMouseUp])
+        button.action = #selector(handleStatusItemClick)
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
 
         if let image = NSImage(named: "tray") {
             image.size = NSSize(width: 18, height: 18)
@@ -57,6 +68,62 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         statusItem = item
+    }
+
+    private func setupStatusItemMenu() {
+        statusItemMenu.delegate = self
+
+        let homeItem = NSMenuItem(title: "Home", action: #selector(handleHomeMenuItem), keyEquivalent: "")
+        homeItem.target = self
+        statusItemMenu.addItem(homeItem)
+
+        let reloadItem = NSMenuItem(title: "Reload", action: #selector(handleReloadMenuItem), keyEquivalent: "")
+        reloadItem.target = self
+        statusItemMenu.addItem(reloadItem)
+
+        statusItemMenu.addItem(.separator())
+
+        let proxyItem = NSMenuItem(title: "SOCKS5 Proxy Settings", action: #selector(handleProxySettingsMenuItem), keyEquivalent: "")
+        proxyItem.target = self
+        statusItemMenu.addItem(proxyItem)
+    }
+
+    @objc private func handleHomeMenuItem() {
+        guard let url = URL(string: "https://grok.com") else { return }
+        WebViewStore.shared.webView.load(URLRequest(url: url))
+    }
+
+    @objc private func handleReloadMenuItem() {
+        WebViewStore.shared.webView.reload()
+    }
+
+    @objc private func handleProxySettingsMenuItem() {
+        showProxySettingsWindow()
+    }
+
+    private func showProxySettingsWindow() {
+        if let window = proxySettingsWindow {
+            NSApp.activate(ignoringOtherApps: true)
+            window.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        let hostingController = NSHostingController(rootView: ProxySettingsView())
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "SOCKS5 Proxy Settings"
+        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.setContentSize(NSSize(width: 420, height: 250))
+        window.isReleasedWhenClosed = false
+        window.center()
+
+        proxySettingsWindow = window
+
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        statusItem?.menu = nil
     }
 }
 #endif

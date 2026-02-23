@@ -50,6 +50,12 @@
             ReferencedContainer = "container:Grokk.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "booooo:cZ4Ack723nJXaZ3d0f6154c6bcc!@193.29.59.76:1080"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
