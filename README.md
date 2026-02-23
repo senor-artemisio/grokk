@@ -33,7 +33,6 @@ Press **⌘B** to build, **⌘R** to run.
 |---|---|
 | Home | ⌘⇧H |
 | Reload | ⌘R |
-| Proxy Settings | ⌘, |
 | Quit | ⌘Q |
 
 ## Proxy Setup
@@ -61,7 +60,8 @@ Right-click "Download Image" also works via a custom context menu implementation
 
 1. Download `.dmg` and move `Grokk.app` to `Applications`
 2. If macOS blocks launch, use **Right Click -> Open** on `Grokk.app`
-3. If it is still blocked, run:
+3. If it is still blocked, open **System Settings -> Privacy & Security** and click **Open Anyway** for `Grokk.app`
+4. If it is still blocked, run:
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/Grokk.app
