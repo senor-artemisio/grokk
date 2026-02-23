@@ -57,6 +57,16 @@ Grok generates images on a separate CDN (`imagine-public.x.ai`). In a standard W
 
 Right-click "Download Image" also works via a custom context menu implementation.
 
+## Install (Unsigned Build)
+
+1. Download `.dmg` and move `Grokk.app` to `Applications`
+2. If macOS blocks launch, use **Right Click -> Open** on `Grokk.app`
+3. If it is still blocked, run:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Grokk.app
+```
+
 ## License
 
 GNU v3

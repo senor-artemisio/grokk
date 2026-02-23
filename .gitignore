@@ -20,3 +20,6 @@ DerivedData/
 
 # Local assistant/tooling folders
 .claude/
+
+# IDE folders
+.idea/
