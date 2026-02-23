@@ -43,6 +43,14 @@ Press **⌘B** to build, **⌘R** to run.
 3. Enter SOCKS5 proxy address, port, and credentials
 4. Click **Save**
 
+## Privacy & Authorization
+
+- **No Grok credential storage** — Grokk does not collect or persist your `grok.com` login/password
+- **No app backend** — Grokk does not send your chats or auth data to any developer-controlled server
+- **Auth is handled by `grok.com`** — sign-in happens in the official Grok web flow inside WebView
+- **Data path** — traffic goes directly to Grok endpoints (and `imagine-public.x.ai` for image downloads)
+- **Proxy exception** — if SOCKS5 is enabled, traffic is routed through your configured proxy; proxy settings are stored locally on your Mac
+
 ## How Downloads Work
 
 Grok generates images on a separate CDN (`imagine-public.x.ai`). In a standard WKWebView, downloading these images fails due to CORS restrictions. Grokk solves this by overriding `fetch()` in JavaScript — when a cross-origin request fails, it transparently retries through Swift's native URLSession (which has no CORS limitations) and returns the result back to JavaScript. The page doesn't know the difference.
