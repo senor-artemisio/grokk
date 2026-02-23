@@ -107,6 +107,9 @@ struct ProxySettingsView: View {
                             useProxy: useProxy
                         )
                     )
+                    #if os(macOS)
+                    NSApp.keyWindow?.close()
+                    #endif
                 }
                 .keyboardShortcut(.defaultAction)
             }
